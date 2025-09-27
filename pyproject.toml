@@ -10,6 +10,8 @@ packages = [{include = "domashka_30"}]
 python = "^3.12"
 django = "^5.2.6"
 djangorestframework = "^3.16.1"
+pillow = "^11.3.0"
+ipython = "^9.5.0"
 
 
 [build-system]
