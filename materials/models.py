@@ -20,6 +20,7 @@ class Lesson(models.Model):
     preview = models.ImageField(upload_to='preview/', verbose_name='preview', null=True, blank=True)
     description = models.TextField()
     link_video = models.URLField(max_length=200)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=None, blank=None)
 
     class Meta:
         verbose_name = 'урок'
