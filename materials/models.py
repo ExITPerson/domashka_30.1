@@ -3,7 +3,7 @@ from django.db import models
 
 class Course(models.Model):
     name = models.CharField(max_length=50)
-    preview = models.ImageField(upload_to='preview/', verbose_name='preview')
+    preview = models.ImageField(upload_to='preview/', verbose_name='preview', null=True, blank=True)
     description = models.TextField()
 
     class Meta:
@@ -17,7 +17,7 @@ class Course(models.Model):
 
 class Lesson(models.Model):
     name = models.CharField(max_length=50)
-    preview = models.ImageField(upload_to='preview/', verbose_name='preview')
+    preview = models.ImageField(upload_to='preview/', verbose_name='preview', null=True, blank=True)
     description = models.TextField()
     link_video = models.URLField(max_length=200)
 
