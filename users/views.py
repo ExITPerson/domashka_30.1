@@ -34,7 +34,7 @@ class SubscriptionAPIView(generics.ListAPIView):
         course_id = self.request.data.get('course_id')
         course_item = get_object_or_404(Course, id=course_id)
 
-        subs_item = Subscription.objects.filte(user=user, course=course_item)
+        subs_item = Subscription.objects.filter(user=user, course=course_item)
 
         if subs_item.exists():
             subs_item.delete()

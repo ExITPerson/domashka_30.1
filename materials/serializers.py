@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
 from materials.models import Course, Lesson
-from materials.validators import URLValidator
+# from materials.validators import URLValidator
 from users.models import Subscription
 
 
@@ -10,8 +10,12 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = '__all__'
-        validators = [URLValidator(field='link_video')]
+        # validators = [URLValidator(field=['link_video'])]
 
+        def validate_link_video(self, value):
+            if 'youtube.com' not in value:
+                raise serializers.ValidationError('URL is not OK')
+            return value
 
 class CourseSerializer(serializers.ModelSerializer):
     lessons = LessonSerializer(many=True, read_only=True)
