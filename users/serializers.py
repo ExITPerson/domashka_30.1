@@ -6,12 +6,17 @@ from users.models import User, Payments, Subscription
 
 class PaymentSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
-    lesson = serializers.PrimaryKeyRelatedField(queryset=Lesson.objects.all())
+    course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all(), required=False, allow_null=True)
+    lesson = serializers.PrimaryKeyRelatedField(queryset=Lesson.objects.all(), required=False, allow_null=True)
 
     class Meta:
         model = Payments
         fields = ['id','payment_date', 'user', 'course', 'lesson', 'payment_amount']
+
+    def validate(self, data):
+        if not data.get('course') and not data.get('lesson'):
+            raise serializers.ValidationError('Требуется заполнить либо курс, либо урок')
+        return data
 
 
 class UserSerializer(serializers.ModelSerializer):
