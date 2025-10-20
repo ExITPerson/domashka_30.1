@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 
@@ -5,7 +7,9 @@ from materials.models import Course, Lesson
 from materials.paginators import CourseAndLessonPaginator
 from materials.permissions import AuthorOrStaff
 from materials.serializers import CourseSerializer, LessonSerializer, CountLessonSerializer
+from materials.tasks import update_notification
 from users.permissions import ModeratorsPermissions
+from django.utils import timezone
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -33,6 +37,22 @@ class CourseViewSet(viewsets.ModelViewSet):
         new_lesson = serializer.save()
         new_lesson.author = self.request.user
         new_lesson.save()
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+
+        if response.status_code == 200:
+            instance = self.get_object()
+
+            now = timezone.now()
+
+            if not instance.last_notified or (now - instance.last_notified) > timedelta(hours=4):
+                update_notification.delay(instance.id)
+
+                instance.last_notified = now
+                instance.save(update_fields=['last_notified'])
+
+        return response
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
