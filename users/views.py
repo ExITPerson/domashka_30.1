@@ -5,6 +5,8 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.views import TokenObtainPairView
+from django.utils import timezone
 
 from materials.models import Course
 from users.models import User, Payments, Subscription
@@ -134,3 +136,18 @@ class StatusPymentView(APIView):
             'payment_status': payment_status,
             'session': session
         })
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code == 200:
+            email = request.data.get('email', None)
+
+            if email:
+                user = User.objects.get(email=email)
+                user.last_login = timezone.now()
+                user.save()
+
+        return response

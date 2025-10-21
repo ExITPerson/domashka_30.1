@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 from materials.models import Course, Lesson
 from django.contrib.auth.base_user import BaseUserManager
+from django.utils import timezone
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -33,6 +34,8 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=15, verbose_name='Phone')
     avatar = models.ImageField(upload_to='avatars/', verbose_name='Аватар')
     city = models.CharField(max_length=50, verbose_name='city', help_text='Введите свой город')
+    is_active = models.BooleanField(default=True)
+    last_login = models.DateTimeField(default=timezone.now())
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

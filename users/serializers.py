@@ -24,7 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'phone_number', 'avatar', 'city', 'payments']
+        fields = ['email', 'phone_number', 'avatar', 'city', 'payments', 'is_active', 'last_login']
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
