@@ -16,6 +16,8 @@ class Course(models.Model):
         related_name='course'
     )
 
+    last_notified = models.DateTimeField(null=True, blank=True, default=None)
+
     class Meta:
         verbose_name = 'курс'
         verbose_name_plural = 'курсы'
