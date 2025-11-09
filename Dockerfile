@@ -1,27 +1,15 @@
 FROM python:3.12-slim
 
-ENV POETRY_VERSION=1.8.2
-ENV POETRY_HOME=/opt/poetry
-ENV POETRY_VENV=/opt/poetry-venv
-ENV POETRY_CACHE_DIR=/opt/.cache
-
 RUN apt-get update && apt-get install -y \
     curl \
-    gcc \
-    build-essential \
     && rm -rf /var/lib/apt/lists/*
-
-RUN python3 -m venv $POETRY_HOME && \
-    $POETRY_HOME/bin/pip install poetry==$POETRY_VERSION
-
-ENV PATH="$POETRY_HOME/bin:$PATH"
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
+# Установка через pip вместо Poetry
+COPY requirements.txt .
 
-RUN poetry config virtualenvs.create false && \
-    poetry install --no-interaction --no-ansi
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
