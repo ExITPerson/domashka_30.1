@@ -121,10 +121,12 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_TIMEZONE = 'Europe/Moscow'
+CELERY_ENABLE_UTC = False
 
 CACHES = {
     'default': {
@@ -148,9 +150,7 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(hour=0, minute=0),
     },
 }
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 TIME_ZONE = 'Europe/Moscow'
 USE_TZ = True
-
-CELERY_TIMEZONE = 'Europe/Moscow'
-CELERY_ENABLE_UTC = False
