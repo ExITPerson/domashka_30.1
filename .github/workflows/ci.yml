@@ -7,8 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: sqlite:///db.sqlite3
-      SECRET_KEY: "django-insecure-test-key-ci-only-not-for-production"
-      DEBUG: "1"
 
     steps:
       - name: Check out code
@@ -25,10 +23,12 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run migrate
-        run: python manage.py migrate
+        run: |
+          SECRET_KEY="django-insecure-test-key-ci-only" python manage.py migrate
 
       - name: Run tests
-        run: python manage.py test
+        run: |
+          SECRET_KEY="django-insecure-test-key-ci-only" python manage.py test
 
   build:
     runs-on: ubuntu-latest
@@ -38,13 +38,13 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Log in to Docker Hub
+      - name: Log in in Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }} .
 
-      - name: Push Docker image to Docker Hub
+      - name: Push Docker image in Docker Hub
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
 
   deploy:
@@ -64,7 +64,7 @@ jobs:
             docker stop myapp || true
             docker rm myapp || true
             docker run -d --name myapp -p 80:8000 --restart unless-stopped \
-              -e SECRET_KEY="django-insecure-change-me-in-production" \
+              -e SECRET_KEY="${{ secrets.DJANGO_SECRET_KEY }}" \
               ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
           EOF
           
