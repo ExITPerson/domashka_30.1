@@ -156,10 +156,10 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 TIME_ZONE = 'Europe/Moscow'
 USE_TZ = True
 
-if 'test' in sys.argv:
+if 'test' in sys.argv or os.environ.get('CI'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'test_db.sqlite3',
+            'NAME': BASE_DIR / 'ci_db.sqlite3',
         }
     }
