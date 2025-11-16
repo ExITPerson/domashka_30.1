@@ -6,7 +6,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: sqlite:///db.sqlite3  # Можно убрать, если хотите
       SECRET_KEY: "django-insecure-test-key-ci-only-not-for-production"
       DEBUG: "1"
 
@@ -33,6 +32,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: test
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Check out code
@@ -67,6 +67,3 @@ jobs:
               -e SECRET_KEY="django-insecure-change-me-in-production" \
               ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
           EOF
-          
-      
-
